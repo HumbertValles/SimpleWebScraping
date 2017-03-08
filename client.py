@@ -66,7 +66,6 @@ class Client(object):
         html = self.get_web_page(
                 "https://www.packtpub.com/packt/offers/free-learning/")
         bookTitle = self.get_title(html)
-        print bookTitle
         self.print_title(bookTitle)
 
 
