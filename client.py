@@ -10,6 +10,8 @@ book from https://www.packtpub.com, using URLLIB2
 
 import urllib2
 import bs4
+import telebot
+import sys
 
 
 class Client(object):
@@ -26,6 +28,7 @@ class Client(object):
         """
         Retrieves an HTML URL returns, HTML
         """
+
         f = urllib2.urlopen(url)
         html = f.read()
         f.close()
@@ -40,20 +43,31 @@ class Client(object):
         title = bs.find("div", "dotd-title").h2.string.strip()
         return title
 
-    def print_title(self, title):
+    def print_title(self, bookTitle):
         """
-        Prints data retrieved
+        If the arguments Bot Token and chat_id were received through
+        the command line, a message is sent to that chat. Otherwise,
+        it only shows the name of the book on the screen
         """
-        print title
+
+        if len(sys.argv) == 3:
+            beepBoop = telebot.TeleBot(sys.argv[1])  #token
+            beepBoop.send_message(sys.argv[2], "Today's free ebook is: "
+                                + bookTitle)  #chat_id
+            print "Message sent to your chat"
+        else:
+            print "Today's free ebook is: "+bookTitle
 
     def run(self):
         """
         Retrieves the title of the free daily book and prints it
         """
+
         html = self.get_web_page(
                 "https://www.packtpub.com/packt/offers/free-learning/")
         bookTitle = self.get_title(html)
-        print "Today's free ebook is: "+bookTitle
+        print bookTitle
+        self.print_title(bookTitle)
 
 
 if __name__ == "__main__":
