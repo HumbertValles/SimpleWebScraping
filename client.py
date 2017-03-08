@@ -15,9 +15,7 @@ import bs4
 class Client(object):
 
     """Web Client, for https://www.packtpub.com
-
-    Downloads the page
-    https://www.packtpub.com/packt/offers/free-learning/
+    Downloads the page https://www.packtpub.com/packt/offers/free-learning/
     to find the title of the book
     """
 
@@ -28,29 +26,37 @@ class Client(object):
         """
         Retrieves an HTML URL returns, HTML
         """
-        raise NotImplementedError
+        f = urllib2.urlopen(url)
+        html = f.read()
+        f.close()
+        return html
 
     def get_title(self, html):
         """
         Parses the html page searching for the title of the book
         """
-        raise NotImplementedError
 
-    def print_title(self, data):
+        bs = bs4.BeautifulSoup(html, 'lxml')
+        title = bs.find("div", "dotd-title").h2.string.strip()
+        return title
+
+    def print_title(self, title):
         """
         Prints data retrieved
         """
-        raise NotImplementedError
+        print title
 
     def run(self):
         """
         Retrieves the title of the free daily book and prints it
         """
-        html = self.get_web_page("https://www.packtpub.com/packt/offers/free-learning/")
+        html = self.get_web_page(
+                "https://www.packtpub.com/packt/offers/free-learning/")
         bookTitle = self.get_title(html)
-        self.print_title(bookTitle)
-                
+        print "Today's free ebook is: "+bookTitle
+
 
 if __name__ == "__main__":
+
     client = Client()
     client.run()
